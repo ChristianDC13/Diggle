@@ -1,0 +1,23 @@
+# Ignore binary files
+*.exe
+*.dll
+*.so
+*.dylib
+main
+
+# Ignore build output
+/bin/
+/pkg/
+/out/
+
+# Ignore IDE files
+.idea/
+.vscode/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore environment-specific files
+
+*.sh
