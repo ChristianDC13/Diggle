@@ -3,7 +3,7 @@ package fuzzysearch
 import "diggle/searcher/models"
 
 type Node struct {
-	item     models.WordFrequency
+	item     *models.WordFrequency
 	children map[int]*Node
 }
 
@@ -21,7 +21,7 @@ func NewBKTree() *BKTree {
 	return &BKTree{root: nil}
 }
 
-func (b *BKTree) Add(wordFreq models.WordFrequency) bool {
+func (b *BKTree) Add(wordFreq *models.WordFrequency) bool {
 
 	if b.root == nil {
 		b.root = &Node{wordFreq, map[int]*Node{}}
@@ -49,7 +49,7 @@ func (b *BKTree) Add(wordFreq models.WordFrequency) bool {
 	return true
 }
 
-func (b *BKTree) Search(wordFreq string, tolerance int) []Result {
+func (b *BKTree) Search(word string, tolerance int) []Result {
 
 	result := []Result{}
 	if b.root == nil {
@@ -59,7 +59,7 @@ func (b *BKTree) Search(wordFreq string, tolerance int) []Result {
 	var traverse func(node *Node)
 
 	traverse = func(node *Node) {
-		distance := GetEditDistance(wordFreq, node.item.Word)
+		distance := GetEditDistance(word, node.item.Word)
 		if distance == 0 {
 			result = append(result, Result{node.item.Word, 0, node.item.Count})
 			return

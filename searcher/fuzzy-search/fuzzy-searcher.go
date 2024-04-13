@@ -27,8 +27,7 @@ func (f *FuzzySearcher) loadDictionary() error {
 			fmt.Print("\033[H\033[2J")
 			p.Printf("Loading dictionary: %d/%d\n", i, len(words))
 		}
-		word := words[i]
-		f.bkt.Add(word)
+		f.bkt.Add(&words[i])
 	}
 	fmt.Print("\033[H\033[2J")
 	p.Printf("Dictionary loaded: %d words\n", len(words))
@@ -36,7 +35,15 @@ func (f *FuzzySearcher) loadDictionary() error {
 }
 
 func (f *FuzzySearcher) Search(word string) []string {
-	results := f.bkt.Search(word, f.tolerance)
+	var results []Result
+	i := 1
+	for i <= f.tolerance {
+		results := f.bkt.Search(word, i)
+		if len(results) > 0 {
+			break
+		}
+		i++
+	}
 
 	sort.Slice(results, func(i, j int) bool {
 		if results[i].distance != results[j].distance {

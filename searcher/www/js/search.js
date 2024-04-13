@@ -4,6 +4,8 @@ const loadMoreButton = document.getElementById("loadMore");
 
 const query = new URLSearchParams(window.location.search).get("q");
 
+const defaultFavicon = "/images/default-favicon.png";
+
 if (!query) {
   window.location.href = "/";
 }
@@ -19,11 +21,6 @@ const extractDomain = (url) => url.split("/")[2];
 const faviconUrl = (url) => {
   const parts = url.split("/");
   return parts[0] + "//" + parts[2] + "/favicon.ico";
-};
-
-const onImageError = (event) => {
-  console.log("error loading image", event.target.src);
-  event.target.src = "/default-favicon.ico";
 };
 
 const itemSkeleton = /*html*/ `
@@ -55,9 +52,9 @@ const renderResults = (results) => {
     resultElement.innerHTML = /*html*/ `
       <div class="flex flex-col gap-4 max-w-[50rem] border-b pb-4">
         <div class="flex gap-4 items-center">
-        <img onError="this.onerror=null;this.src='images/default-favicon.png';" src="${faviconUrl(
-          url
-        )}" class="w-8 h-8 border rounded-lg" />
+        <img onError="this.onerror=null;this.src='${defaultFavicon}';" src="${faviconUrl(
+      url
+    )}" class="w-8 h-8 border rounded-lg" />
           <span>
             <p class="font-medium">${extractDomain(url)}</p>
             <p title="${url}" class="text-gray-600 truncate max-w-[35rem]">${url}</p>
@@ -111,6 +108,11 @@ const performSearch = async () => {
 
     if (page >= pagesCount) {
       loadMoreButton.style.display = "none";
+    }
+
+    if (currentPage > 1) {
+      loadMoreButton.disabled = false;
+      loadMoreButton.innerHTML = "More results";
     }
   }
 };
