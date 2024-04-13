@@ -4,6 +4,7 @@ import (
 	"diggle/crawler/repository"
 	"diggle/crawler/scrapper"
 	domainExtractor "diggle/crawler/url-tools/domain-extractor"
+	"diggle/crawler/webqueue"
 	"flag"
 	"fmt"
 	"sync"
@@ -16,7 +17,7 @@ type Crawler struct {
 	mu         *sync.Mutex
 }
 
-func (c *Crawler) Crawl(maxPages, simultaneousRequests int) {
+func (c *Crawler) Crawl(maxPages, simultaneousRequests int, wq *webqueue.WebQueue) {
 
 	showStatusFlag := flag.Bool("show-status", false, "Show status of the crawler")
 
@@ -30,18 +31,15 @@ func (c *Crawler) Crawl(maxPages, simultaneousRequests int) {
 	}
 
 	for {
-		i = (*c.repository).GetPagesCount()
+
 		if i >= int64(maxPages) {
 			break
 		}
 		ch <- struct{}{}
 		go func() {
-
-			url, err := (*c.repository).DequeuePage()
-			if err != nil {
-				<-ch
-				return
-			}
+			c.mu.Lock()
+			url := wq.Dequeue()
+			c.mu.Unlock()
 			if url == "" {
 				<-ch
 				return
@@ -60,7 +58,9 @@ func (c *Crawler) Crawl(maxPages, simultaneousRequests int) {
 				if err != nil {
 					continue
 				}
-				(*c.repository).EnqueuePage(u)
+				c.mu.Lock()
+				wq.Enqueue(u)
+				c.mu.Unlock()
 			}
 
 			added, err := (*c.repository).AddPage(page)
@@ -85,12 +85,13 @@ func NewCrawler(scrapper *scrapper.Scrapper, repo repository.Repository) *Crawle
 
 func (c *Crawler) Start(firstURLs []string, maxPages, simultaneousRequests int) {
 
+	wq := webqueue.NewWebQueue()
 	for _, url := range firstURLs {
-		(*c.repository).EnqueuePage(url)
+		wq.Enqueue(url)
 	}
 
 	now := time.Now()
-	c.Crawl(maxPages, simultaneousRequests)
+	c.Crawl(maxPages, simultaneousRequests, wq)
 	elapsed := time.Since(now)
 
 	hours := int(elapsed.Hours())
