@@ -7,13 +7,12 @@ require (
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
 	github.com/tebeka/snowball v0.7.0
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.23.0
+	golang.org/x/text v0.14.0
 )
 
 require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/kljensen/snowball v0.9.0 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
-	golang.org/x/text v0.14.0 // indirect
 )
