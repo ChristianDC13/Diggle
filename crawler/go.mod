@@ -1,14 +1,14 @@
 module diggle/crawler
 
-go 1.21.6
+go 1.23.0
 
 require (
 	github.com/joho/godotenv v1.5.1
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
 	github.com/tebeka/snowball v0.7.0
-	golang.org/x/net v0.23.0
-	golang.org/x/text v0.14.0
+	golang.org/x/net v0.38.0
+	golang.org/x/text v0.23.0
 )
 
 require (
